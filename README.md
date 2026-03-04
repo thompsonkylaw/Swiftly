@@ -1,22 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Swiftly - AI Instructor Platform
+
+Swiftly is an educational platform that leverages AI to provide personalized instruction within a validated and monitored environment.
+
+## Features
+
+1.  **Institutional Registry**: Validates school credentials and ingests official curriculum (Textbooks/Syllabi) to ensuring the AI stays on-topic.
+2.  **Teacher Command Center**: Allows teachers to define the "Digital Perimeter" (lesson scope) and generate secure invite codes for students.
+3.  **Student Active Session**: An AI-driven tutoring interface that adapts to student speed while adhering to the teacher's perimeter.
+4.  **Live Dashboard**: Real-time monitoring for teachers to track student progress and intervene when necessary.
 
 ## Getting Started
 
-First, run the development server:
+1.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2.  **Run the development server**:
+    ```bash
+    npm run dev
+    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3.  **Open the application**:
+    Navigate to [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Usage Flow
+
+1.  Go to **/registry** to "Validate" a school (e.g., "Lincoln High School") and upload a mock syllabus.
+2.  Go to **/teacher/command-center** to create a lesson topic (e.g. "American Revolution") and get an **Invite Code**.
+3.  Open a new tab/window at **/student/session** and enter the Invite Code to join as a student.
+    - Chat with the mock AI tutor.
+4.  In the original window, go to **/teacher/dashboard** to see the active session and simulated progress.
+
+## Tech Stack
+
+-   **Framework**: Next.js 15 (App Router)
+-   **Styling**: Tailwind CSS
+-   **Language**: TypeScript
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
