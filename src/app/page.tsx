@@ -11,23 +11,20 @@ export default function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
         <Link href="/registry" className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200">
           <h2 className="text-xl font-bold text-gray-800 mb-2">Institutional Registry</h2>
-          <p className="text-gray-600">Step 1: Validate credentials and upload official syllabus.</p>
+          <p className="text-gray-600">Start here: Validate credentials and upload official syllabus.</p>
         </Link>
         
         <Link href="/teacher/command-center" className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Teacher Command Center</h2>
-          <p className="text-gray-600">Step 2: Define lesson perimeter and generate invite codes.</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Teacher Dashboard</h2>
+          <p className="text-gray-600">Create classes, assignments, and manage student work.</p>
         </Link>
 
         <Link href="/student/session" className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Student Interface</h2>
-          <p className="text-gray-600">Step 3: Join active session with AI tutor.</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Student Portal</h2>
+          <p className="text-gray-600">Join a class, view assignments, and complete work.</p>
         </Link>
 
-        <Link href="/teacher/dashboard" className="block p-6 bg-white rounded-lg shadow hover:shadow-md transition border border-gray-200">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Live Dashboard</h2>
-          <p className="text-gray-600">Step 4: Monitor real-time student progress.</p>
-        </Link>
+        {/* Removed redundant live dashboard link as it is now part of teacher dashboard flow */}
       </div>
     </div>
   );

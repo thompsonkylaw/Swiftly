@@ -1,82 +1,77 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-export default function CommandCenter() {
-  const router = useRouter();
-  const [topic, setTopic] = useState('');
-  const [perimeter, setPerimeter] = useState('');
-  const [inviteCode, setInviteCode] = useState('');
+export default function TeacherDashboard() {
+  const [className, setClassName] = useState('');
+  const [classes, setClasses] = useState<{ id: string, name: string, inviteCode: string }[]>([]);
 
-  const createSession = async () => {
-    const res = await fetch('/api/session', {
+  const createClass = async () => {
+    if (!className.trim()) return;
+    const res = await fetch('/api/class', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ topic, perimeter }),
+      body: JSON.stringify({ name: className }),
     });
-    const data = await res.json();
-    if (data.active) {
-      setInviteCode(data.inviteCode);
-    }
+    const newClass = await res.json();
+    setClasses(prev => [...prev, newClass]);
+    setClassName('');
   };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-4xl mx-auto bg-white shadow rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-4 text-gray-800">Command Center</h1>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-gray-800">Teacher Dashboard</h1>
         
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Lesson Topic</label>
-          <input
-            type="text"
-            className="w-full border p-2 rounded text-black"
-            value={topic}
-            onChange={e => setTopic(e.target.value)}
-            placeholder="e.g. American Revolution"
-          />
-        </div>
-
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Digital Perimeter
-            <span className="text-xs text-gray-500 ml-2">(Define scope/boundaries for AI)</span>
-          </label>
-          <textarea
-            className="w-full border p-2 rounded text-black h-32"
-            value={perimeter}
-            onChange={e => setPerimeter(e.target.value)}
-            placeholder="The AI should focus on the causes and key battles. Avoid post-war analysis. Verify student understanding of 'No Taxation Without Representation'."
-          />
-        </div>
-
-        <button
-          onClick={createSession}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Create Session & Generate Code
-        </button>
-
-        {inviteCode && (
-          <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded">
-            <h3 className="text-lg font-medium text-green-900">Session Active!</h3>
-            <p className="mt-2 text-green-800">
-              Share this invite code with your students:
-              <span className="ml-2 font-mono text-2xl font-bold tracking-widest bg-white px-2 py-1 rounded border border-green-300">
-                {inviteCode}
-              </span>
-            </p>
-            <div className="mt-4">
-              <button
-                onClick={() => router.push('/teacher/dashboard')}
-                className="text-blue-600 underline"
-              >
-                Go to Live Dashboard &rarr;
-              </button>
-            </div>
+        {/* Create Class Section */}
+        <div className="bg-white shadow rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-bold mb-4 text-gray-800">Create New Class</h2>
+          <div className="flex gap-4">
+            <input
+              type="text"
+              className="flex-1 border p-2 rounded text-black"
+              value={className}
+              onChange={e => setClassName(e.target.value)}
+              placeholder="e.g. AP US History - Period 1"
+            />
+            <button
+              onClick={createClass}
+              className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            >
+              Create Class
+            </button>
           </div>
-        )}
+        </div>
+
+        {/* Classes List */}
+        <h2 className="text-xl font-bold mb-4 text-gray-800">Your Classes</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {classes.map(cls => (
+            <div key={cls.id} className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+              <div className="flex justify-between items-start mb-4">
+                <h3 className="text-lg font-bold text-gray-900">{cls.name}</h3>
+                <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-mono font-bold tracking-wider">
+                  {cls.inviteCode}
+                </span>
+              </div>
+              <p className="text-gray-500 text-sm mb-4">Invite Code: {cls.inviteCode}</p>
+              <Link
+                href={`/teacher/class/${cls.id}`}
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Manage Assignments &rarr;
+              </Link>
+            </div>
+          ))}
+          {classes.length === 0 && (
+            <div className="col-span-full text-center py-12 text-gray-500 bg-white rounded-lg border border-dashed border-gray-300">
+              No classes active. Create one above to get started.
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+

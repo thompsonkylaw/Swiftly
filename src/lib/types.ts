@@ -13,11 +13,30 @@ export interface Syllabus {
   verified: boolean;
 }
 
-export interface Session {
+export type LearningMethod = 'ai_tutor' | 'quiz_mode' | 'summary_check' | 'socratic_dialogue';
+
+export interface Class {
   id: string;
   schoolId: string;
+  name: string;
   teacherId: string;
-  inviteCode: string;
-  perimeter: string; // description of the lesson/topic
-  active: boolean;
+  inviteCode: string; // Code for students to join
 }
+
+export interface Assignment {
+  id: string;
+  classId: string;
+  title: string;
+  fileUrl?: string; // Mocked file url
+  fileName?: string;
+  learningMethod: LearningMethod;
+  deadline: string; // ISO Date string
+  createdAt: string;
+}
+
+export interface Student {
+  id: string;
+  name: string;
+  joinedClasses: string[]; // classIds
+}
+
