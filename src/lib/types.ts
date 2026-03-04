@@ -40,3 +40,11 @@ export interface Student {
   joinedClasses: string[]; // classIds
 }
 
+export interface Session {
+  id: string;
+  classId: string;
+  code: string;
+  status: 'active' | 'ended';
+  startedAt: string;
+}
+
