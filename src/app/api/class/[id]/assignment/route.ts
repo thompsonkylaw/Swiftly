@@ -7,7 +7,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, learningMethod, deadline, fileName } = body;
+    const { title, learningMethod, deadline, fileName, aiContent } = body;
     
     const newAssignment: Assignment = {
       id: Date.now().toString(),
@@ -16,6 +16,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       learningMethod,
       deadline,
       fileName,
+      aiContent,
       createdAt: new Date().toISOString(),
     };
     

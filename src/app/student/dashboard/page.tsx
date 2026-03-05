@@ -165,7 +165,8 @@ function DashboardContent() {
                 </div>
                 <ul className="divide-y divide-gray-200">
                     {assignments.map(ass => (
-                        <li key={ass.id} className="p-6 hover:bg-gray-50 transition">
+                        <Link href={`/student/assignment/${ass.id}`} key={ass.id}>
+                        <li className="p-6 hover:bg-gray-50 transition cursor-pointer">
                             <div className="flex justify-between items-start">
                                 <div>
                                     <h4 className="text-lg font-bold text-gray-900">{ass.title}</h4>
@@ -179,6 +180,7 @@ function DashboardContent() {
                                 </div>
                             </div>
                         </li>
+                        </Link>
                     ))}
                 </ul>
             </div>

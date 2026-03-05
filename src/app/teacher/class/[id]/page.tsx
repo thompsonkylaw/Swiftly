@@ -15,6 +15,8 @@ export default function ClassManagement() {
     fileName: '',
   });
 
+  const [isScanning, setIsScanning] = useState(false);
+
   useEffect(() => {
     fetch(`/api/class/${id}/assignment`)
       .then(res => res.json())
@@ -22,15 +24,43 @@ export default function ClassManagement() {
   }, [id]);
 
   const handleCreateAssignment = async () => {
+    setIsScanning(true);
+    
+    // Simulate AI Scan delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // Generate Mock AI Content based on method
+    let aiContent = "";
+    const { title, learningMethod, fileName } = newAssignment;
+    
+    if (learningMethod === 'ai_tutor') {
+        aiContent = `Welcome to your AI Tutor session for "${title}". Based on ${fileName}, I'm ready to help you understand the core concepts. What would you like to start with?`;
+    } else if (learningMethod === 'quiz_mode') {
+        aiContent = JSON.stringify([
+            { id: 1, question: `Based on ${title}, what is the primary outcome?`, options: ["Outcome A", "Outcome B", "Outcome C"], answer: 0 },
+            { id: 2, question: `In ${fileName}, which factor is most critical?`, options: ["Factor X", "Factor Y", "Factor Z"], answer: 1 }
+        ]);
+    } else if (learningMethod === 'summary_check') {
+        aiContent = `Please provide a concise summary of ${fileName} regarding "${title}". Focus on the main arguments and conclusion.`;
+    } else if (learningMethod === 'socratic_dialogue') {
+        aiContent = `I've analyzed ${fileName}. Let's discuss "${title}". To begin, what creates the central conflict in this piece?`;
+    }
+
+    const payload = { ...newAssignment, aiContent };
+
     const res = await fetch(`/api/class/${id}/assignment`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newAssignment),
+      body: JSON.stringify(payload),
     });
+    
+    setIsScanning(false);
+
     if (res.ok) {
       const created = await res.json();
       setAssignments([...assignments, created]);
       setNewAssignment({ title: '', learningMethod: 'ai_tutor', deadline: '', fileName: '' });
+      alert("Assignment created and AI content generated successfully!");
     }
   };
 
@@ -62,9 +92,13 @@ export default function ClassManagement() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">Upload Work File</label>
-               <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:bg-gray-50">
-                  <div className="space-y-1 text-center">
+              <label className="block text-sm font-medium text-gray-700">Upload Work File (AI Scan)</label>
+              <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50 ${isScanning ? 'border-indigo-500 bg-indigo-50 animate-pulse' : 'border-gray-300'}`}>
+                <div className="space-y-1 text-center">
+                  {isScanning ? (
+                      <div className="text-indigo-600 font-bold">Scanning Document...</div>
+                  ) : (
+                    <>
                     <svg className="mx-auto h-8 w-8 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                       <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
@@ -74,9 +108,11 @@ export default function ClassManagement() {
                         <input type="file" className="sr-only" onChange={e => setNewAssignment({...newAssignment, fileName: e.target.files?.[0]?.name || ''})} />
                       </label>
                     </div>
-                    {newAssignment.fileName && <p className="text-xs text-green-600">{newAssignment.fileName}</p>}
-                  </div>
+                    </>
+                  )}
+                  {newAssignment.fileName && !isScanning && <p className="text-xs text-green-600 font-bold">Selected: {newAssignment.fileName}</p>}
                 </div>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">Learning Method</label>
@@ -103,9 +139,10 @@ export default function ClassManagement() {
           </div>
           <button 
             onClick={handleCreateAssignment}
-            className="mt-4 w-full bg-indigo-600 text-white py-2 px-4 rounded hover:bg-indigo-700 transition"
+            disabled={isScanning || !newAssignment.title}
+            className={`mt-4 w-full text-white py-2 px-4 rounded transition ${isScanning ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700'}`}
           >
-            Assign Work
+            {isScanning ? 'AI Scanning...' : 'Assign Work'}
           </button>
         </div>
 
@@ -118,6 +155,7 @@ export default function ClassManagement() {
                 <h3 className="font-bold text-lg text-gray-800">{a.title}</h3>
                 <p className="text-sm text-gray-500">Method: <span className="font-medium capitalize">{a.learningMethod.replace('_', ' ')}</span></p>
                 <p className="text-sm text-gray-500">File: {a.fileName || 'No file uploaded'}</p>
+                {a.aiContent && <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full mt-1 inline-block">AI Generated</span>}
               </div>
               <div className="text-right">
                  <p className="text-sm font-semibold text-red-600">Due: {new Date(a.deadline).toLocaleDateString()}</p>
