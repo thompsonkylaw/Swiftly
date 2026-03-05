@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -18,7 +18,7 @@ interface Assignment {
   description: string;
 }
 
-export default function StudentDashboard() {
+function DashboardContent() {
   const searchParams = useSearchParams();
   const schoolName = searchParams.get('school');
   const isOwner = searchParams.get('order') === 'true' || searchParams.get('owner') === 'true'; // handle typo if any
@@ -179,4 +179,12 @@ export default function StudentDashboard() {
       `}</style>
     </div>
   );
+}
+
+export default function StudentDashboard() {
+    return (
+        <Suspense fallback={<div className="p-12 text-center text-gray-500">Loading Dashboard...</div>}>
+            <DashboardContent />
+        </Suspense>
+    );
 }
