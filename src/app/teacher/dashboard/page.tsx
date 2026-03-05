@@ -46,12 +46,13 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="#" className="text-sm font-medium text-gray-600 hover:text-gray-900">Sign in</Link>
+          <Link href="/auth/signup" className="text-sm font-medium text-gray-600 hover:text-gray-900">Sign out</Link>
           <Link 
             href="/teacher/command-center" 
-            className="bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl"
+            className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-500 transition-all shadow-lg hover:shadow-xl flex items-center gap-2"
           >
-            Get a demo
+            <span>Command Center</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
           </Link>
         </div>
       </nav>
