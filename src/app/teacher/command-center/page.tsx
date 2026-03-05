@@ -1,26 +1,46 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function TeacherDashboard() {
+interface BulletinPost {
+  id: string;
+  content: string;
+  createdAt: string;
+}
+
+function TeacherDashboardContent() {
+  const searchParams = useSearchParams();
+  const schoolName = searchParams.get('school'); // Passed from signup redirect
+  const isAdmin = searchParams.get('admin') === 'true';
+  const userId = searchParams.get('user');
+
   const [className, setClassName] = useState('');
   const [classes, setClasses] = useState<{ id: string, name: string, inviteCode: string }[]>([]);
+  const [bulletinPost, setBulletinPost] = useState('');
+  const [posts, setPosts] = useState<BulletinPost[]>([]);
 
   useEffect(() => {
-    async function fetchClasses() {
+    async function fetchData() {
+      // Fetch Classes
       try {
         const res = await fetch('/api/class');
         const data = await res.json();
-        if (Array.isArray(data)) {
-            setClasses(data);
-        }
-      } catch (err) {
-        console.error("Failed to fetch classes", err);
+        if (Array.isArray(data)) setClasses(data);
+      } catch (err) { console.error(err); }
+
+      // Fetch Bulletin if Admin
+      if (schoolName) {
+         try {
+             fetch(`/api/school/bulletin?school=${encodeURIComponent(schoolName)}`)
+             .then(res => res.json())
+             .then(data => setPosts(Array.isArray(data) ? data : []));
+         } catch(e) { console.error(e); }
       }
     }
-    fetchClasses();
-  }, []);
+    fetchData();
+  }, [schoolName]);
 
   const createClass = async () => {
     if (!className.trim()) return;
@@ -34,11 +54,63 @@ export default function TeacherDashboard() {
     setClassName('');
   };
 
+  const handlePostBulletin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bulletinPost.trim() || !schoolName || !userId) return;
+
+    try {
+        const res = await fetch('/api/school/bulletin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ schoolName, content: bulletinPost, userId }),
+        });
+        if (res.ok) {
+            setBulletinPost('');
+             // Refresh
+             fetch(`/api/school/bulletin?school=${encodeURIComponent(schoolName)}`)
+             .then(res => res.json())
+             .then(data => setPosts(Array.isArray(data) ? data : []));
+        } else {
+            alert("Failed to post: Not authorized?");
+        }
+    } catch(err) { console.error(err); }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-800">Teacher Dashboard</h1>
         
+        {/* School Admin Section */}
+        {schoolName && (
+            <div className="bg-white shadow rounded-lg p-6 mb-8 border-l-4 border-indigo-600">
+                <h2 className="text-xl font-bold text-gray-800">School: {schoolName}</h2>
+                {isAdmin ? (
+                    <div className="mt-4">
+                        <h3 className="font-semibold text-gray-700 mb-2">📢 Admin Bulletin Board</h3>
+                        <form onSubmit={handlePostBulletin} className="flex gap-2 mb-4">
+                            <input
+                                type="text"
+                                className="flex-1 border p-2 rounded text-black"
+                                placeholder="Post a school-wide announcement..."
+                                value={bulletinPost}
+                                onChange={e => setBulletinPost(e.target.value)}
+                            />
+                            <button type="submit" className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Post</button>
+                        </form>
+                        <div className="bg-gray-50 p-3 rounded h-32 overflow-y-auto">
+                           {posts.map(p => (
+                               <div key={p.id} className="border-b py-1 text-sm text-gray-600 last:border-0">{p.content}</div>
+                           ))}
+                           {posts.length === 0 && <span className="text-gray-400 text-sm">No posts yet.</span>}
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-gray-500 mt-2 text-sm">You are logged in as a teacher at this school.</p>
+                )}
+            </div>
+        )}
+
         {/* Create Class Section */}
         <div className="bg-white shadow rounded-lg p-6 mb-8">
           <h2 className="text-xl font-bold mb-4 text-gray-800">Create New Class</h2>
@@ -87,6 +159,14 @@ export default function TeacherDashboard() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TeacherDashboard() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TeacherDashboardContent />
+    </Suspense>
   );
 }
 

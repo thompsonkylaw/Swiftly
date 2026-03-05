@@ -21,13 +21,12 @@ interface Assignment {
 function DashboardContent() {
   const searchParams = useSearchParams();
   const schoolName = searchParams.get('school');
-  const isOwner = searchParams.get('order') === 'true' || searchParams.get('owner') === 'true'; // handle typo if any
+  const isOwner = false; // Students are never owners/admins
   const userId = searchParams.get('user');
 
   const [posts, setPosts] = useState<BulletinPost[]>([]);
-  const [newPost, setNewPost] = useState('');
-  const [showHomework, setShowHomework] = useState(false);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
+  const [inviteCode, setInviteCode] = useState('');
 
   useEffect(() => {
     if (schoolName) {
@@ -35,14 +34,57 @@ function DashboardContent() {
         .then(res => res.json())
         .then(data => setPosts(Array.isArray(data) ? data : []));
     }
+    
+    if (userId) {
+        fetch(`/api/student/assignments?studentId=${encodeURIComponent(userId)}`)
+            .then(res => res.json())
+            .then(data => {
+                if(Array.isArray(data)) {
+                     const formatted = data.map((a: any) => ({
+                        id: a.id,
+                        title: a.title,
+                        deadline: a.deadline,
+                        teacherName: "Teacher", 
+                        description: `Learning Method: ${a.learningMethod}`
+                    }));
+                    setAssignments(formatted);
+                }
+            })
+            .catch(err => console.error("Failed to fetch assignments", err));
+    }
+  }, [schoolName, userId]);
 
-    // Mock fetching assignments - in real app, fetch based on student ID
-    setAssignments([
-        { id: '1', title: 'Essay on WWII', deadline: '2024-10-15', teacherName: 'Mr. Smith', description: 'Write a 5 page essay on the impact of WWII.' },
-        { id: '2', title: 'Math Problem Set 4', deadline: '2024-10-12', teacherName: 'Mrs. Davis', description: 'Complete problems 1-20 in Chapter 4.' },
-    ]);
-
-  }, [schoolName]);
+  const handleJoinClass = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!inviteCode.trim()) return;
+      try {
+          const res = await fetch('/api/student/join', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({ code: inviteCode, studentId: userId })
+          });
+          const data = await res.json();
+          if (data.assignments) {
+              // Add new assignments to the list. In a real app we'd fetch all user's assignments.
+              // Here we just append for the session.
+              const newAssigns = data.assignments.map((a: any) => ({
+                  id: a.id,
+                  title: a.title,
+                  deadline: a.deadline,
+                  teacherName: "Teacher", // In real app, fetch teacher name
+                  description: `Learning Method: ${a.learningMethod}`
+              }));
+              setAssignments(prev => [...prev, ...newAssigns]);
+              setInviteCode('');
+              alert(`Joined class: ${data.class.name}`);
+          } else {
+              alert("Failed to join class. Invalid code?");
+          }
+      } catch (err) {
+          console.error(err);
+          alert("Error joining class");
+      }
+  };
 
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,7 +130,25 @@ function DashboardContent() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         
         {/* School Bulletin Section */}
-        <div className="bg-white shadow rounded-lg mb-8 overflow-hidden">
+        <divJoin Class Section */}
+        <div className="bg-white shadow rounded-lg mb-8 p-6 text-center">
+            <h3 className="text-lg font-bold text-gray-800 mb-4">Join a Class</h3>
+            <form onSubmit={handleJoinClass} className="flex justify-center gap-2 max-w-md mx-auto">
+                <input 
+                    type="text" 
+                    value={inviteCode}
+                    onChange={(e) => setInviteCode(e.target.value)}
+                    placeholder="Enter 6-char Invite Code"
+                    className="border border-gray-300 rounded p-2 flex-1 text-center font-mono uppercase tracking-widest"
+                    maxLength={6}
+                />
+                <button type="submit" className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-medium">
+                    Join
+                </button>
+            </form>
+        </div>
+
+        {/*  className="bg-white shadow rounded-lg mb-8 overflow-hidden">
             <div className="px-4 py-5 sm:px-6 border-b border-gray-200 bg-blue-50">
                 <h3 className="text-lg leading-6 font-medium text-blue-900">
                     School Bulletin Board
@@ -99,22 +159,6 @@ function DashboardContent() {
             </div>
             
             <div className="p-6">
-                {isOwner && (
-                    <div className="mb-6 bg-yellow-50 p-4 rounded border border-yellow-200">
-                        <h4 className="font-bold text-yellow-800 mb-2">Admin Control: Add Announcement</h4>
-                        <form onSubmit={handlePostSubmit} className="flex gap-2">
-                            <input 
-                                type="text" 
-                                value={newPost}
-                                onChange={(e) => setNewPost(e.target.value)}
-                                className="flex-1 border border-gray-300 rounded p-2"
-                                placeholder="Type a new announcement..."
-                            />
-                            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Post</button>
-                        </form>
-                    </div>
-                )}
-
                 <div className="space-y-4">
                     {posts.length === 0 ? (
                         <p className="text-gray-500 italic">No announcements yet.</p>

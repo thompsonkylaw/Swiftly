@@ -9,6 +9,7 @@ export default function SignupPage() {
   const [role, setRole] = useState<'student' | 'teacher'>('student');
   const [name, setName] = useState('');
   const [schoolName, setSchoolName] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,7 +22,7 @@ export default function SignupPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, role, schoolName }),
+        body: JSON.stringify({ name, role, schoolName, isAdmin }),
       });
 
       const data = await res.json();
@@ -31,11 +32,16 @@ export default function SignupPage() {
             const params = new URLSearchParams({
                 user: data.user.id,
                 school: schoolName,
-                owner: data.isOwner ? 'true' : 'false'
+                owner: 'false' // Students never own anymore
             });
             router.push(`/student/dashboard?${params.toString()}`);
         } else {
-            router.push(data.redirect);
+            const params = new URLSearchParams({
+                school: schoolName,
+                admin: data.isAdmin ? 'true' : 'false',
+                user: data.user.id
+            });
+            router.push(`${data.redirect}?${params.toString()}`);
         }
       }
     } catch (err) {
@@ -97,7 +103,38 @@ export default function SignupPage() {
                   name="school-name"
                   type="text"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+              
+            
+            {role === 'teacher' && (
+              <div className="bg-gray-50 p-2 border border-gray-300 rounded-b-md">
+                <div>
+                    <label htmlFor="school-name-teacher" className="sr-only">School Name</label>
+                    <input
+                    id="school-name-teacher"
+                    name="school-name"
+                    type="text"
+                    required
+                    className="appearance-none rounded block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm mb-2"
+                    placeholder="School Name"
+                    value={schoolName}
+                    onChange={(e) => setSchoolName(e.target.value)}
+                    />
+                </div>
+                <div className="flex items-center">
+                  <input
+                    id="is-admin"
+                    name="is-admin"
+                    type="checkbox"
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    checked={isAdmin}
+                    onChange={(e) => setIsAdmin(e.target.checked)}
+                  />
+                  <label htmlFor="is-admin" className="ml-2 block text-sm text-gray-900">
+                    I am a School Administrator/Owner
+                  </label>
+                </div>
+              </div>
+            )}    className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                   placeholder="School Name"
                   value={schoolName}
                   onChange={(e) => setSchoolName(e.target.value)}

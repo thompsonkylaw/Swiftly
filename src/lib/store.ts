@@ -75,6 +75,12 @@ export function getAssignmentById(id: string): Assignment | undefined {
   return assignments.find(a => a.id === id);
 }
 
+export function getAssignmentsForStudent(studentId: string): Assignment[] {
+  const student = students.find(s => s.id === studentId);
+  if (!student) return [];
+  return assignments.filter(a => student.joinedClasses.includes(a.classId));
+}
+
 // --- Students ---
 export function registerStudent(student: Student) {
   const existing = students.find(s => s.id === student.id);
@@ -84,8 +90,14 @@ export function registerStudent(student: Student) {
 }
 
 export function enrollStudentInClass(studentId: string, classId: string) {
-  const student = students.find(s => s.id === studentId);
-  if (student && !student.joinedClasses.includes(classId)) {
+  let student = students.find(s => s.id === studentId);
+  if (!student) {
+     // Auto-create for demo/simplicity
+     student = { id: studentId, name: 'Student', joinedClasses: [] };
+     students.push(student);
+  }
+  
+  if (!student.joinedClasses.includes(classId)) {
     student.joinedClasses.push(classId);
   }
 }

@@ -4,18 +4,19 @@ import { getClassByCode, enrollStudentInClass, getAssignmentsByClass } from '@/l
 
 export async function POST(request: Request) {
   try {
-    const { code } = await request.json();
+    const { code, studentId } = await request.json();
     const classData = getClassByCode(code);
     
     if (!classData) {
       return NextResponse.json({ error: 'Invalid invite code' }, { status: 404 });
     }
 
-    // Mock student ID (in real app, from session)
-    const studentId = 'student-1'; 
-    enrollStudentInClass(studentId, classData.id);
+    // Use provided student ID or fallback
+    const actualStudentId = studentId || 'student-1'; 
+    enrollStudentInClass(actualStudentId, classData.id);
 
     // Return class info + assignments
+    console.log(`Student ${actualStudentId} joining class ${classData.id}`);
     const assignments = getAssignmentsByClass(classData.id);
     
     return NextResponse.json({ 
