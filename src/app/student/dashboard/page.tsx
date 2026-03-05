@@ -130,7 +130,24 @@ function DashboardContent() {
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         
         {/* School Bulletin Section */}
-        <divJoin Class Section */}
+        <div className="bg-white overflow-hidden shadow rounded-lg mb-8">
+            <div className="p-6">
+                <div className="space-y-4">
+                    {posts.length === 0 ? (
+                        <p className="text-gray-500 italic">No announcements yet.</p>
+                    ) : (
+                        posts.map((post: any) => (
+                            <div key={post.id} className="border-l-4 border-blue-400 bg-gray-50 p-4 rounded-r shadow-sm">
+                                <p className="text-gray-800 font-medium">{post.content}</p>
+                                <p className="text-xs text-gray-400 mt-2">{new Date(post.createdAt || Date.now()).toLocaleDateString()}</p>
+                            </div>
+                        ))
+                    )}
+                </div>
+            </div>
+        </div>
+
+        {/* Join Class Section */}
         <div className="bg-white shadow rounded-lg mb-8 p-6 text-center">
             <h3 className="text-lg font-bold text-gray-800 mb-4">Join a Class</h3>
             <form onSubmit={handleJoinClass} className="flex justify-center gap-2 max-w-md mx-auto">
