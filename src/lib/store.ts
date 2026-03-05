@@ -1,4 +1,4 @@
-import { Class, Assignment, Student, Session } from './types';
+import { Class, Assignment, Student, Session, School, BulletinPost } from './types';
 
 // Simple in-memory store for demonstration purposes
 // In production, use a database (Postgres/Redis)
@@ -8,12 +8,33 @@ declare global {
   var _assignments: Assignment[] | undefined;
   var _students: Student[] | undefined;
   var _sessions: Session[] | undefined;
+  var _schools: School[] | undefined;
 }
 
 const classes = global._classes || (global._classes = []);
 const assignments = global._assignments || (global._assignments = []);
 const students = global._students || (global._students = []);
 const sessions = global._sessions || (global._sessions = []);
+const schools = global._schools || (global._schools = []);
+
+// --- Schools ---
+export function addSchool(school: School) {
+  if (!schools.find(s => s.name === school.name)) {
+      schools.push(school);
+  }
+}
+
+export function getSchoolByName(name: string): School | undefined {
+  return schools.find(s => s.name === name);
+}
+
+export function updateSchoolBulletin(schoolName: string, post: BulletinPost) {
+  const school = schools.find(s => s.name === schoolName);
+  if (school) {
+    if (!school.bulletin) school.bulletin = [];
+    school.bulletin.unshift(post);
+  }
+}
 
 // --- Classes ---
 export function createClass(cls: Class) {

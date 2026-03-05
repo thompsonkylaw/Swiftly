@@ -3,6 +3,15 @@ export interface School {
   name: string;
   location: string;
   district?: string;
+  ownerId?: string; // The ID of the student/user who first claimed this school
+  bulletin: BulletinPost[];
+}
+
+export interface BulletinPost {
+  id: string;
+  content: string;
+  authorId: string;
+  createdAt: string;
 }
 
 export interface Syllabus {

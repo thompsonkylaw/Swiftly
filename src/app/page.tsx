@@ -23,20 +23,16 @@ export default function Home() {
           </Link>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-            <Link href="#" className="hover:text-gray-900 transition-colors">Products</Link>
-            <Link href="#" className="hover:text-gray-900 transition-colors">Solutions</Link>
-            <Link href="#" className="hover:text-gray-900 transition-colors">Impact Stories</Link>
-            <Link href="#" className="hover:text-gray-900 transition-colors">Learn</Link>
-            <Link href="#" className="hover:text-gray-900 transition-colors">Pricing</Link>
+            {/* Products, Solutions etc removed as requested */}
           </div>
         </div>
         <div className="flex items-center gap-6">
-          <Link href="/teacher/command-center" className="text-sm font-medium text-gray-600 hover:text-gray-900">Sign in</Link>
+          <Link href="/auth/signup" className="text-sm font-medium text-gray-600 hover:text-gray-900">Sign in</Link>
           <Link 
-            href="/teacher/command-center" 
+            href="/auth/signup" 
             className="bg-gray-900 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl"
           >
-            Get a demo
+            Sign up
           </Link>
         </div>
       </nav>
@@ -157,10 +153,10 @@ export default function Home() {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <Link 
-                href="/teacher/command-center" 
+                href="/auth/signup" 
                 className="bg-gray-900 text-white px-8 py-4 rounded-xl text-lg font-bold hover:bg-gray-800 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1 transform"
             >
-              Get a demo
+              Get started
             </Link>
           </div>
         </div>
