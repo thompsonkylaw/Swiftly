@@ -1,11 +1,26 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function TeacherDashboard() {
   const [className, setClassName] = useState('');
   const [classes, setClasses] = useState<{ id: string, name: string, inviteCode: string }[]>([]);
+
+  useEffect(() => {
+    async function fetchClasses() {
+      try {
+        const res = await fetch('/api/class');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+            setClasses(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch classes", err);
+      }
+    }
+    fetchClasses();
+  }, []);
 
   const createClass = async () => {
     if (!className.trim()) return;
