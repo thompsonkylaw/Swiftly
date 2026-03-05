@@ -1,10 +1,10 @@
 import { School } from './types';
 
 export const VALID_SCHOOLS: School[] = [
-  { id: '1', name: 'Lincoln High School', location: 'Lincoln, NE', district: 'Lincoln Public Schools' },
-  { id: '2', name: 'Roosevelt Elementary', location: 'Omaha, NE', district: 'Omaha Public Schools' },
-  { id: '3', name: 'Washington Middle School', location: 'Seattle, WA', district: 'Seattle Public Schools' },
-  { id: '4', name: 'Ling Gang Gu', location: 'Test City', district: 'Test District' },
+  { id: '1', name: 'Lincoln High School', location: 'Lincoln, NE', district: 'Lincoln Public Schools', bulletin: [] },
+  { id: '2', name: 'Roosevelt Elementary', location: 'Omaha, NE', district: 'Omaha Public Schools', bulletin: [] },
+  { id: '3', name: 'Washington Middle School', location: 'Seattle, WA', district: 'Seattle Public Schools', bulletin: [] },
+  { id: '4', name: 'Ling Gang Gu', location: 'Test City', district: 'Test District', bulletin: [] },
 ];
 
 export async function verifySchoolCredential(schoolName: string): Promise<School | null> {
