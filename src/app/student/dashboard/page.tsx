@@ -27,6 +27,7 @@ function DashboardContent() {
   const [posts, setPosts] = useState<BulletinPost[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [inviteCode, setInviteCode] = useState('');
+  const [showHomework, setShowHomework] = useState(false);
 
   useEffect(() => {
     if (schoolName) {
@@ -86,28 +87,6 @@ function DashboardContent() {
       }
   };
 
-  const handlePostSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newPost.trim() || !schoolName) return;
-
-    try {
-      const res = await fetch('/api/school/bulletin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ schoolName, content: newPost, userId }),
-      });
-      
-      if (res.ok) {
-        setNewPost('');
-        // Refresh posts
-        const updated = await fetch(`/api/school/bulletin?school=${encodeURIComponent(schoolName)}`).then(res => res.json());
-        setPosts(updated);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   if (!schoolName) return <div className="p-8">Please log in via the signup page.</div>;
 
   return (
@@ -165,31 +144,6 @@ function DashboardContent() {
             </form>
         </div>
 
-        {/*  className="bg-white shadow rounded-lg mb-8 overflow-hidden">
-            <div className="px-4 py-5 sm:px-6 border-b border-gray-200 bg-blue-50">
-                <h3 className="text-lg leading-6 font-medium text-blue-900">
-                    School Bulletin Board
-                </h3>
-                <p className="mt-1 max-w-2xl text-sm text-blue-500">
-                    Official announcements and news.
-                </p>
-            </div>
-            
-            <div className="p-6">
-                <div className="space-y-4">
-                    {posts.length === 0 ? (
-                        <p className="text-gray-500 italic">No announcements yet.</p>
-                    ) : (
-                        posts.map((post: any) => (
-                            <div key={post.id} className="border-l-4 border-blue-400 bg-gray-50 p-4 rounded-r shadow-sm">
-                                <p className="text-gray-800 font-medium">{post.content}</p>
-                                <p className="text-xs text-gray-400 mt-2">{new Date(post.createdAt || Date.now()).toLocaleDateString()}</p>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
-        </div>
 
         {/* Homework Button & Section */}
         <div className="text-center mb-8">
