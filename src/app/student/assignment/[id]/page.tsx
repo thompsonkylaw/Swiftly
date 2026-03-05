@@ -124,19 +124,40 @@ function AssignmentContent() {
         </nav>
 
         <main className="max-w-5xl mx-auto py-8 px-4">
-            <div className="bg-white shadow rounded-lg overflow-hidden min-h-[600px] flex flex-col">
-                {/* Header */}
-                <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100">
-                    <h2 className="text-lg font-medium text-indigo-900">
-                        Interactive Learning Session
-                    </h2>
-                    {assignment.fileName && (
-                        <p className="text-sm text-indigo-500 mt-1">Reference Material: {assignment.fileName}</p>
-                    )}
+            <div className="bg-white shadow rounded-lg overflow-hidden min-h-[600px] flex flex-col md:flex-row">
+                
+                {/* PDF Viewer / Reference Column */}
+                <div className="md:w-1/2 bg-gray-100 border-r border-gray-200 flex flex-col">
+                    <div className="bg-gray-200 px-4 py-3 border-b flex justify-between items-center">
+                        <span className="text-sm font-semibold text-gray-700">Reference Material</span>
+                        {assignment.fileName && <span className="text-xs text-gray-500 truncate max-w-[150px]">{assignment.fileName}</span>}
+                    </div>
+                    <div className="flex-1 p-4 bg-gray-50 overflow-y-auto min-h-[400px]">
+                        {assignment.fileName ? (
+                           <div className="h-full flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                                <svg className="w-16 h-16 text-red-500 mb-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg>
+                                <h3 className="text-lg font-medium text-gray-900">{assignment.fileName}</h3>
+                                <p className="text-sm text-gray-500 mt-2">This is a placeholder for the PDF viewer. In a real app, the PDF content would be rendered here.</p>
+                                <a href="#" className="mt-4 px-4 py-2 bg-white border border-gray-300 rounded text-sm text-indigo-600 hover:bg-gray-50 font-medium">
+                                    Download PDF
+                                </a>
+                           </div>
+                        ) : (
+                            <div className="h-full flex items-center justify-center text-gray-400">No reference material provided.</div>
+                        )}
+                    </div>
                 </div>
 
-                {/* Content Area */}
-                <div className="flex-1 p-6 overflow-y-auto">
+                {/* Content Area - Right Column */}
+                <div className="md:w-1/2 flex flex-col h-full min-h-[600px]">
+                    <div className="bg-indigo-50 px-6 py-4 border-b border-indigo-100">
+                        <h2 className="text-lg font-medium text-indigo-900">
+                            Interactive Session
+                        </h2>
+                        <p className="text-xs text-indigo-400 mt-1">Complete the tasks below to submit.</p>
+                    </div>
+
+                    <div className="flex-1 p-6 overflow-y-auto">
                     
                     {/* AI Tutor / Socratic Chat Interface */}
                     {(assignment.learningMethod === 'ai_tutor' || assignment.learningMethod === 'socratic_dialogue') && (
@@ -233,7 +254,7 @@ function AssignmentContent() {
 
                     {/* Summary Check Interface */}
                     {assignment.learningMethod === 'summary_check' && (
-                        <div className="max-w-3xl mx-auto">
+                        <div className="max-w-3xl mx-auto h-full flex flex-col">
                             <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
                                 <div className="flex">
                                     <div className="flex-shrink-0">
@@ -247,7 +268,7 @@ function AssignmentContent() {
                                 </div>
                             </div>
                             <textarea 
-                                className="w-full h-64 p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+                                className="flex-1 w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black min-h-[150px]"
                                 placeholder="Start writing your summary here..."
                                 value={summaryText}
                                 onChange={e => setSummaryText(e.target.value)}
@@ -263,6 +284,8 @@ function AssignmentContent() {
                     )}
 
                 </div>
+                {/* End of Right Column */}
+                </div>  
             </div>
         </main>
     </div>

@@ -121,4 +121,8 @@ export function getSubmissionsByAssignment(assignmentId: string): Submission[] {
   return submissions.filter(s => s.assignmentId === assignmentId);
 }
 
+export function getSubmissionsForStudent(studentId: string): Submission[] {
+  return submissions.filter(s => s.studentId === studentId);
+}
+
 

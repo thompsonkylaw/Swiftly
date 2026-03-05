@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAssignmentsForStudent } from '@/lib/store';
+import { getAssignmentsForStudent, getSubmissionsForStudent } from '@/lib/store';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -9,7 +9,12 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Missing studentId' }, { status: 400 });
   }
 
-  // Use the newly exported function
   const assignments = getAssignmentsForStudent(studentId);
-  return NextResponse.json(assignments);
-}
+  const submissions = getSubmissionsForStudent(studentId);
+
+  // Filter out assignments that have already been submitted
+  const pendingAssignments = assignments.filter(assignment => 
+      !submissions.some(sub => sub.assignmentId === assignment.id)
+  );
+
+  return NextResponse.json(pendingAssignments);
