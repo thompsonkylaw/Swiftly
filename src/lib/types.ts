@@ -50,6 +50,16 @@ export interface Student {
   joinedClasses: string[]; // classIds
 }
 
+export interface Submission {
+  id: string;
+  assignmentId: string;
+  studentId: string;
+  content: string; // JSON string for quiz/chat history, or plain text for summary
+  submittedAt: string;
+  score?: number; // Optional generated score
+  status: 'submitted' | 'graded';
+}
+
 export interface Session {
   id: string;
   classId: string;

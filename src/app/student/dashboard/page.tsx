@@ -165,7 +165,7 @@ function DashboardContent() {
                 </div>
                 <ul className="divide-y divide-gray-200">
                     {assignments.map(ass => (
-                        <Link href={`/student/assignment/${ass.id}`} key={ass.id}>
+                        <Link href={`/student/assignment/${ass.id}?user=${userId || 'student-1'}`} key={ass.id}>
                         <li className="p-6 hover:bg-gray-50 transition cursor-pointer">
                             <div className="flex justify-between items-start">
                                 <div>

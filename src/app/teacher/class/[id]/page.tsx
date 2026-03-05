@@ -157,8 +157,14 @@ export default function ClassManagement() {
                 <p className="text-sm text-gray-500">File: {a.fileName || 'No file uploaded'}</p>
                 {a.aiContent && <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full mt-1 inline-block">AI Generated</span>}
               </div>
-              <div className="text-right">
+              <div className="text-right flex flex-col items-end gap-2">
                  <p className="text-sm font-semibold text-red-600">Due: {new Date(a.deadline).toLocaleDateString()}</p>
+                 <Link 
+                    href={`/teacher/assignment/${a.id}/submissions`}
+                    className="text-xs bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full hover:bg-indigo-200 transition"
+                 >
+                    View Submissions
+                 </Link>
                  <span className="text-xs text-gray-400">ID: {a.id}</span>
               </div>
             </div>

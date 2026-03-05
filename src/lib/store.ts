@@ -1,4 +1,4 @@
-import { Class, Assignment, Student, Session, School, BulletinPost } from './types';
+import { Class, Assignment, Student, Session, School, BulletinPost, Submission } from './types';
 
 // Simple in-memory store for demonstration purposes
 // In production, use a database (Postgres/Redis)
@@ -9,6 +9,7 @@ declare global {
   var _students: Student[] | undefined;
   var _sessions: Session[] | undefined;
   var _schools: School[] | undefined;
+  var _submissions: Submission[] | undefined;
 }
 
 const classes = global._classes || (global._classes = []);
@@ -16,6 +17,7 @@ const assignments = global._assignments || (global._assignments = []);
 const students = global._students || (global._students = []);
 const sessions = global._sessions || (global._sessions = []);
 const schools = global._schools || (global._schools = []);
+const submissions = global._submissions || (global._submissions = []);
 
 // --- Schools ---
 export function addSchool(school: School) {
@@ -89,6 +91,10 @@ export function registerStudent(student: Student) {
   }
 }
 
+export function getStudent(id: string): Student | undefined {
+  return students.find(s => s.id === id);
+}
+
 export function enrollStudentInClass(studentId: string, classId: string) {
   let student = students.find(s => s.id === studentId);
   if (!student) {
@@ -101,4 +107,18 @@ export function enrollStudentInClass(studentId: string, classId: string) {
     student.joinedClasses.push(classId);
   }
 }
+
+// --- Submissions ---
+export function submitAssignment(submission: Submission) {
+  submissions.push(submission);
+}
+
+export function getSubmissions(assignmentId: string): Submission[] {
+  return submissions.filter(s => s.assignmentId === assignmentId);
+}
+
+export function getSubmissionsByAssignment(assignmentId: string): Submission[] {
+  return submissions.filter(s => s.assignmentId === assignmentId);
+}
+
 
